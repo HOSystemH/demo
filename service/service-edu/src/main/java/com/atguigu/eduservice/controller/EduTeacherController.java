@@ -3,9 +3,12 @@ package com.atguigu.eduservice.controller;
 
 import com.atguigu.commonutils.R;
 import com.atguigu.eduservice.entity.EduTeacher;
+import com.atguigu.eduservice.entity.vo.TearchQuery;
 import com.atguigu.eduservice.service.EduTeacherService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -71,6 +74,52 @@ public class EduTeacherController {
         //方式二:
         //        return R.ok().data("total",total).data("rows",records);
 
+    }
+
+    //带条件查询分页的方法
+    @PostMapping("pageTeacherCondition/{current}/{limit}")
+    public R pageTeacherCondition(@PathVariable long current, @PathVariable long limit,
+                                  @RequestBody(required = false) TearchQuery tearchQuery){
+
+        //创建Page对象
+        Page<EduTeacher> page = new Page<>(current,limit);
+
+        //构建条件
+        QueryWrapper<EduTeacher> queryWrapper = new QueryWrapper<>();
+        //mybatis dynamic sql
+        //判断条件是否为空  为空不拼接条件
+        String name = tearchQuery.getName();
+        Integer level = tearchQuery.getLevel();
+        String begin = tearchQuery.getBegin();
+        String end = tearchQuery.getEnd();
+        //判断条件是否为空 不为空拼接条件
+        if(!StringUtils.isEmpty(name)){
+            //构建条件
+            queryWrapper.likeRight("name",name);
+        }
+
+        if(!StringUtils.isEmpty(level)){
+            queryWrapper.eq("level",level);
+        }
+
+        if(!StringUtils.isEmpty(begin)){
+            queryWrapper.ge("gmt_create",begin);
+        }
+
+        if(!StringUtils.isEmpty(end)){
+            queryWrapper.le("gmt_create",end);
+        }
+
+        //调用方法实现 条i教案查询分页
+        eduTeacher.page(page,queryWrapper);
+
+        long total = page.getTotal();
+        List<EduTeacher> records = page.getRecords();
+
+        Map map = new HashMap<>();
+        map.put("total",total);
+        map.put("rows",records);
+        return R.ok().data(map);
     }
 }
 
