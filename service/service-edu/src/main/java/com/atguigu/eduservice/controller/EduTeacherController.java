@@ -4,10 +4,13 @@ package com.atguigu.eduservice.controller;
 import com.atguigu.commonutils.R;
 import com.atguigu.eduservice.entity.EduTeacher;
 import com.atguigu.eduservice.service.EduTeacherService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -43,6 +46,31 @@ public class EduTeacherController {
         }else {
             return R.error();
         }
+    }
+
+    //分页查询
+    //current 当前页
+    //limit 每页记录数
+    @GetMapping("/pageTeacher/{current}/{limit}")
+    public R pageListTeacher(@PathVariable long current,@PathVariable long limit){
+        //创建page对象
+        Page<EduTeacher> pageTeacher = new Page<>(current,limit);
+        //调用方法
+        //调用方法时,底层自动处理  把分页所有数据封装到pageTeacher对象里面
+        eduTeacher.page(pageTeacher,null);
+
+        long total = pageTeacher.getTotal();
+        List<EduTeacher> records = pageTeacher.getRecords();
+
+        //方式一
+        Map map = new HashMap<>();
+        map.put("total",total);
+        map.put("rows",records);
+        return R.ok().data(map);
+
+        //方式二:
+        //        return R.ok().data("total",total).data("rows",records);
+
     }
 }
 
