@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +121,31 @@ public class EduTeacherController {
         map.put("total",total);
         map.put("rows",records);
         return R.ok().data(map);
+    }
+
+    //添加讲师接口方法
+    @PostMapping("/addTeacher")
+    public R addTeacher(@RequestBody EduTeacher eduTeacher){
+
+        eduTeacher.setGmtCreate(new Date());
+        eduTeacher.setGmtModified(new Date());
+        boolean save = this.eduTeacher.save(eduTeacher);
+
+        return save == true ? R.ok():R.error();
+    }
+
+    //根据id查询数据
+    @GetMapping("/getTearcher/{id}")
+    public R getTearcher(@PathVariable String id){
+        EduTeacher byId = eduTeacher.getById(id);
+        return R.ok().data("items",byId);
+    }
+
+    //修改功能
+    @PostMapping("/updateTearcher")
+    public R updateTearcher(@RequestBody EduTeacher eduTeacher){
+        boolean flag = this.eduTeacher.updateById(eduTeacher);
+        return flag == true ? R.ok():R.error();
     }
 }
 
