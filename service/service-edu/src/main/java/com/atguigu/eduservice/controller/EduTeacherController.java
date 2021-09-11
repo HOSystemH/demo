@@ -139,12 +139,12 @@ public class EduTeacherController {
     @GetMapping("/getTearcher/{id}")
     public R getTearcher(@PathVariable String id) {
         EduTeacher byId = eduTeacher.getById(id);
-        
+
 //        try {
 //            int i = 1 / 0;
 //        } catch (Exception e) {
 //            //执行自定义异常
-//            throw new GuliException(20001,"自定义异常");
+//            throw new GuliException(20001, "自定义异常");
 //        }
         return R.ok().data("items", byId);
     }
