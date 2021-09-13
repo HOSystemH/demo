@@ -3,7 +3,7 @@ package com.atguigu.eduservice.controller;
 
 import com.atguigu.commonutils.R;
 import com.atguigu.eduservice.entity.EduTeacher;
-import com.atguigu.eduservice.entity.vo.TearchQuery;
+import com.atguigu.eduservice.entity.vo.TearcherQuery;
 import com.atguigu.eduservice.service.EduTeacherService;
 import com.atguigu.servicebase.exceptionhandler.GuliException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -82,7 +82,7 @@ public class EduTeacherController {
     //带条件查询分页的方法
     @PostMapping("pageTeacherCondition/{current}/{limit}")
     public R pageTeacherCondition(@PathVariable long current, @PathVariable long limit,
-                                  @RequestBody(required = false) TearchQuery tearchQuery) {
+                                  @RequestBody(required = false) TearcherQuery teacherQuery) {
 
         //创建Page对象
         Page<EduTeacher> page = new Page<>(current, limit);
@@ -91,10 +91,10 @@ public class EduTeacherController {
         QueryWrapper<EduTeacher> queryWrapper = new QueryWrapper<>();
         //mybatis dynamic sql
         //判断条件是否为空  为空不拼接条件
-        String name = tearchQuery.getName();
-        Integer level = tearchQuery.getLevel();
-        String begin = tearchQuery.getBegin();
-        String end = tearchQuery.getEnd();
+        String name = teacherQuery.getName();
+        Integer level = teacherQuery.getLevel();
+        String begin = teacherQuery.getBegin();
+        String end = teacherQuery.getEnd();
         //判断条件是否为空 不为空拼接条件
         if (!StringUtils.isEmpty(name)) {
             //构建条件
@@ -112,6 +112,9 @@ public class EduTeacherController {
         if (!StringUtils.isEmpty(end)) {
             queryWrapper.le("gmt_create", end);
         }
+
+        //排序
+        queryWrapper.orderByDesc("gmt_create");
 
         //调用方法实现 条i教案查询分页
         eduTeacher.page(page, queryWrapper);

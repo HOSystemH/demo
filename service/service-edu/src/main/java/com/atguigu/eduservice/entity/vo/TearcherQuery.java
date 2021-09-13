@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TearchQuery {
+public class TearcherQuery {
 
     @ApiModelProperty(value = "教师名称,模糊查询")
     private String name;
